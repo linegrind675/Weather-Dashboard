@@ -111,11 +111,11 @@ input {
     margin-left: 10%;
 }
 
-.historyItems {
+.historySearch {
     margin-top: 20px;
 }
 
-.historyItems:nth-child() {
+.historySearch:nth-child() {
     margin-top: 20px;
 }
 
