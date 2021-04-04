@@ -29,7 +29,7 @@ if (JSON.parse(localStorage.getItem("searchHistory")) === null) {
     renderSearchHistory();
 }
 
-searchBtn.on("click", function(e) {
+searchBtn.on("click", function (e) {
     e.preventDefault();
     if (searchInput.val() === "") {
         alert("You must enter the name of a city!");
@@ -39,7 +39,7 @@ searchBtn.on("click", function(e) {
     getWeather(searchInput.val());
 });
 
-$(document).on("click", ".historyEntry", function() {
+$(document).on("click", ".historyEntry", function () {
     console.log("clicked history item")
     let thisElement = $(this);
     getWeather(thisElement.text());
@@ -72,20 +72,37 @@ function getWeather(desiredCity) {
         url: queryUrl,
         method: "GET"
     })
-    .then(function(weatherData) {
-        let cityObj = {
-            cityName: weatherData.name,
-            cityTemp: weatherData.main.temp,
-            cityHumidity: weatherData.main.humidity,
-            cityWindSpeed: weatherData.wind.speed,
-            cityUVIndex: weatherData.weather[0].icon
-        }
-    let queryUrl = `https://api.openweathermap.org/data/2.5/uvi?lat=${cityObj.cityUVIndex.lat}&lon=${cityObj.cityUVIndex.lon}&APPID=${apiKey}&units=imperial`;
-    $.ajax({
-        url: queryUrl,
-        method: "GET"
-    })
+        .then(function (weatherData) {
+            let cityObj = {
+                cityName: weatherData.name,
+                cityTemp: weatherData.main.temp,
+                cityHumidity: weatherData.main.humidity,
+                cityWindSpeed: weatherData.wind.speed,
+                cityUVIndex: weatherData.weather[0].icon
+            }
+            let queryUrl = `https://api.openweathermap.org/data/2.5/uvi?lat=${cityObj.cityUVIndex.lat}&lon=${cityObj.cityUVIndex.lon}&APPID=${apiKey}&units=imperial`;
+            $.ajax({
+                url: queryUrl,
+                method: "GET"
+            })
+                .then(function (uvData) {
+                    if (JSON.parse(localStorage.getItem("searchHistory")) === null) {
+                        let searchHistoryArr = [];
 
+                        if (searchHistoryArr.indexOf(cityObj.cityName) === -1) {
+                            searchHistoryArr.push(cityObj.cityName);
 
-    })
+                            localStorage.setItem("searchHistory", JSON.stringify(searchHistoryArr));
+                            let renderedWeatherIcon = `https:///openweathermap.org/img/w/${cityObj.cityWeatherIconName}.png`;
+                            renderWeatherData(cityObj.cityName, cityObj.cityTemp, cityObj.cityHumidity, cityObj.cityWindSpeed, renderedWeatherIcon, uvData.value);
+                            renderSearchHistory(cityObj.cityName);
+                        } else {
+                            console.log("City is already in the search history!")
+                            let renderedWeatherIcon = `https:///openweathermap.org/img/w/${cityObj.cityWeatherIconName}.png`;
+                            renderWeatherData(cityObj.cityName, cityObj.cityTemp, cityObj.cityHumidity, cityObj.cityWindSpeed, renderedWeatherIcon, uvData.value);
+                        } 
+                    }
+                })
+
+        })
 }
