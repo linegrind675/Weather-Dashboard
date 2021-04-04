@@ -21,3 +21,23 @@ let cityNameEl = $(".cityName");
 let currentDateEl = $(".currentDate");
 let weatherIconEl = $(".weatherIcon");
 let searchHistory = $(".historySearch");
+
+function renderSearchHistory(cityName) {
+    searchHistoryEl.empty();
+    let searchHistoryArr = JSON.parse(localStorage.getItem("searchHistory"));
+    for (let i = 0; i < searchHistoryArr.length; i++) {
+        let newList Item = $("<li>").attr("class", "historyEntry");
+        newListItem.text(searchHistoryArr[i]);
+        searchHistoryEl.prepend(newListItem);
+    }
+}
+
+function renderWeatherData(cityName, cityHumidity, cityWindSpeed, cityWeatherIcon, uvVal) {
+    cityNameEl.text(cityName)
+    currentDateEl.text(`(${today})`)
+    tempEl.text(`Temperature: ${cityTemp} °F`);
+    humidityEl.text(`Humidity: ${cityHumidity} %`);
+    windSpeedEl.text(`Wind Speed: ${cityWindSpeed} MPH`);
+    uvIndexEl.text(`UV Index: ${uvVal}`);
+    weatherIconEl.attr("src", cityWeatherIcon);
+}
